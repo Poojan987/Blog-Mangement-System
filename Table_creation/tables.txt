@@ -1,0 +1,19 @@
+user	admin	login	post comment		category
+
+user
+
+create table login(username varchar(50) primary key,user_password varchar(50),isAdmin boolean default false,isSuperAdmin boolean default false);
+create table admin(username varchar(50) primary key , firstName varchar(50) NOT NULL, lastName varchar(50) NOT NULL, birth_date date NOT NULL,CONSTRAINT fk_usname_admin FOREIGN KEY(username) REFERENCES login(username));
+
+--create table login(username varchar(50) primary key,user_password varchar(50),isAdmin boolean);
+--create table post(post_id int primary key AUTO_INCREMENT, username varchar(50) ,dt timestamp default current_timestamp ,title varchar(40) NOT NULL,isDeleted boolean default false,blogcontent TEXT NOT NULL,bool_repost boolean default false,repost_user_name varchar(50),CONSTRAINT fk_usname_post FOREIGN KEY(username) REFERENCES user(username));
+--create table admin(username varchar(50) primary key CONSTRAINT fk_usname_admin FOREIGN KEY(username) REFERENCES login(username), firstName varchar(50) NOT NULL, lastName varchar(50) NOT NULL, birth_date date NOT NULL);
+--create table user(username varchar(50) PRIMARY KEY, firstName varchar(50) NOT NULL, lastName varchar(50) NOT NULL, birth_date date NOT NULL, userEmail varchar(30) NOT NULL, CONSTRAINT fk_usname_user FOREIGN KEY(username) REFERENCES login(username));
+--create table category(cat_id int primary key AUTO_INCREMENT,title varchar(50) NOT NULL,cat_type varchar(50) NOT NULL);
+--create table comment(comment_id int primary key AUTO_INCREMENT, username varchar(50), comment_content text NOT NULL, post_id int, time timestamp default current_timestamp,CONSTRAINT fk_post_comment FOREIGN KEY(post_id) REFERENCES post(post_id),CONSTRAINT fk_usname_comment FOREIGN KEY(username) REFERENCES user(username));
+
+--create table post_category_bridge(post_id int,cat_id int,CONSTRAINT fk_po_bridge FOREIGN KEY(post_id) REFERENCES post(post_id),CONSTRAINT fk_ca_bridge FOREIGN KEY(cat_id) REFERENCES category(cat_id),primary key(post_id,cat_id));
+--create table admin_category_bridge(admin_user varchar(50),cat_id int,CONSTRAINT fk_ad_bridge FOREIGN KEY(admin_user) REFERENCES admin(username),CONSTRAINT fk_cat_ad_bridge FOREIGN KEY(cat_id) REFERENCES category(cat_id),primary key(admin_user,cat_id));
+
+
+--create table permission_bridge(admin_user varchar(50),post_id int,CONSTRAINT fk_ad_pr_bridge FOREIGN KEY(admin_user) REFERENCES admin(username),CONSTRAINT fk_po_pr_bridge FOREIGN KEY(post_id) REFERENCES post(post_id),primary key(admin_user,post_id));
