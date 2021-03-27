@@ -12,8 +12,3 @@ create table admin(username varchar(50) primary key , firstName varchar(50) NOT 
 --create table category(cat_id int primary key AUTO_INCREMENT,title varchar(50) NOT NULL,cat_type varchar(50) NOT NULL);
 --create table comment(comment_id int primary key AUTO_INCREMENT, username varchar(50), comment_content text NOT NULL, post_id int, time timestamp default current_timestamp,CONSTRAINT fk_post_comment FOREIGN KEY(post_id) REFERENCES post(post_id),CONSTRAINT fk_usname_comment FOREIGN KEY(username) REFERENCES user(username));
 
---create table post_category_bridge(post_id int,cat_id int,CONSTRAINT fk_po_bridge FOREIGN KEY(post_id) REFERENCES post(post_id),CONSTRAINT fk_ca_bridge FOREIGN KEY(cat_id) REFERENCES category(cat_id),primary key(post_id,cat_id));
---create table admin_category_bridge(admin_user varchar(50),cat_id int,CONSTRAINT fk_ad_bridge FOREIGN KEY(admin_user) REFERENCES admin(username),CONSTRAINT fk_cat_ad_bridge FOREIGN KEY(cat_id) REFERENCES category(cat_id),primary key(admin_user,cat_id));
-
-
---create table permission_bridge(admin_user varchar(50),post_id int,CONSTRAINT fk_ad_pr_bridge FOREIGN KEY(admin_user) REFERENCES admin(username),CONSTRAINT fk_po_pr_bridge FOREIGN KEY(post_id) REFERENCES post(post_id),primary key(admin_user,post_id));
