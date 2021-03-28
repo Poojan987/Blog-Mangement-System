@@ -1,0 +1,2 @@
+for insertion of super_user
+insert into login values('super_user', 'super123', false, true);
