@@ -1,2 +1,8 @@
 for insertion of super_user
 insert into login values('super_user', 'super123', false, true);
+
+
+dummy data
+insert into login(username, user_password, isAdmin) values('admin1', '123', true);
+insert into login(username, user_password, isAdmin) values('admin2', '123', true);
+insert into login(username, user_password, isAdmin) values('admin3', '123', true);
