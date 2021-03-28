@@ -1,1 +1,5 @@
 gender in the user table
+
+
+adding image input-group-icon of register.html by using
+<i class="fa fa-user"></i>
