@@ -1,0 +1,13 @@
+create database myFirstFlaskApp;
+show databases;
+create table users(id int(11) auto_increment primary key,name varchar(100),email varchar(100),username varchar(30),password varchar(100),register_date timestamp default current_timestamp);
+show tables;
+select * from users;
+
+pip install Flask-mysqldb
+pip install Flask-WTF	(for form validations)
+
+pip install passlib
+
+
+

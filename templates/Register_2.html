@@ -1,0 +1,109 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <h1>Register</h1>
+  {% from "includes/_formhelpers.html" import render_field %}
+<link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}"/>  
+  
+  {# <form method="POST" action="">
+    <div class="form-group">
+      {{render_field(form.name, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.email, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.username, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.password, class_="form-control")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.confirm, class_="form-control")}}
+    </div>
+    <p><input type="submit" class="btn btn-primary" value="Submit"></p>
+  </form> #}
+
+  {# <div class="container"> #}
+  
+
+  <form method="POST" action="">
+    <div class="row">
+      <h4>Account</h4>
+      {# Username #}
+      <div class="input-group ">
+        {# <input type="text" placeholder="User Name"/> #}
+        {{render_field(form.username, class_="form-control")}}
+        <div class="input-icon"><i class="fa fa-user"></i></div>
+      </div>
+      {# first name #}
+      <div class="input-group ">
+        {# <input type="text" placeholder="First Name"/> #}
+        {{render_field(form.fname, class_="form-control")}}
+        <div class="input-icon"><i class="fa fa-user"></i></div>
+      </div>
+      {# last name #}
+      <div class="input-group ">
+        {# <input type="text" placeholder="Last Name"/> #}
+        {{render_field(form.lname, class_="form-control")}}
+        <div class="input-icon"><i class="fa fa-user"></i></div>
+      </div>
+
+      {# email #}
+      <div class="input-group ">
+        {# <input type="email" placeholder="Email Adress"/> #}
+        {{render_field(form.email, class_="form-control")}}
+        <div class="input-icon"><i class="fa fa-envelope"></i></div>
+      </div>
+      {#passwrod#}
+      <div class="input-group ">
+        {# <input type="password" placeholder="Password"/> #}
+        {{render_field(form.password, class_="form-control")}}
+        <div class="input-icon"><i class="fa fa-key"></i></div>
+      </div>
+      
+      <div class="input-group ">
+        {# <input type="password" placeholder="Password"/> #}
+        {{render_field(form.confirm, class_="form-control")}}
+        <div class="input-icon"><i class="fa fa-key"></i></div>
+      </div>
+      
+    </div>
+    <div class="row">
+      {# <div class="col-half"> #}
+      {#DATE OF BIRTH#}
+        <h4>Date of Birth</h4>
+        {{render_field(form.dob,class="form-control")}}
+      {# </div> #}
+      
+      {#GENDER#}
+      {# <div class="col-half"> #}
+        <h4>Gender</h4>
+        {# <div class="input-group">
+          <input id="gender-male" type="radio" name="gender" value="male"/>
+          <label for="gender-male">Male</label>
+          <input id="gender-female" type="radio" name="gender" value="female"/>
+          <label for="gender-female">Female</label>
+        </div> #}
+        
+        {# {{render_field(form.gender,class="form-control")}} #}
+        {% for subfield in form.gender %}
+    <tr>
+        <td>{{ subfield }}</td>
+        <td>{{ subfield.label }}</td>
+    </tr>
+    {% endfor %}
+      {# </div> #}
+    </div>
+    
+    <div class="row">
+      <h4>Terms and Conditions</h4>
+      <div class="input-group">
+        <input id="terms" type="checkbox"/>
+        <label for="terms">I accept the terms and conditions for signing up to this service, and hereby confirm I have read the privacy policy.</label>
+      </div>
+    </div>
+     <p><input type="submit" class="btn btn-primary" value="Submit"></p>
+  </form>
+{# </div> #}
+{% endblock %}
