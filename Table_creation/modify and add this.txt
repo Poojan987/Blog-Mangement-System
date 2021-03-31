@@ -1,0 +1,6 @@
+write placeholder in wtforms
+
+--create table user(username varchar(50) PRIMARY KEY, firstName varchar(50) NOT NULL, lastName varchar(50) NOT NULL, birth_date date NOT NULL, userEmail varchar(30) NOT NULL, CONSTRAINT fk_usname_user FOREIGN KEY(username) REFERENCES login(username));
+alter table user add gender varchar(10) not null;
+--create table post(post_id int primary key AUTO_INCREMENT, username varchar(50) not null,dt timestamp default current_timestamp ,title varchar(40) NOT NULL,isDeleted boolean default false,blogcontent TEXT NOT NULL,bool_repost boolean default false,repost_user_name varchar(50),CONSTRAINT fk_usname_post FOREIGN KEY(username) REFERENCES user(username));
+alter table post modify  username varchar(50) not null;
