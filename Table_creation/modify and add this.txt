@@ -1,7 +1,7 @@
 write placeholder in wtforms
 
 --login
-alter table login modify password varchar(500);
+alter table login modify user_password varchar(500);
 
 --create table user(username varchar(50) PRIMARY KEY, firstName varchar(50) NOT NULL, lastName varchar(50) NOT NULL, birth_date date NOT NULL, userEmail varchar(30) NOT NULL, CONSTRAINT fk_usname_user FOREIGN KEY(username) REFERENCES login(username));
 alter table user add gender varchar(10) not null;
