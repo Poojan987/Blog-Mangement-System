@@ -14,3 +14,7 @@ alter table post modify  username varchar(50) not null;
 
 
 alter table post add brief_desc varchar(150);
+
+
+
+create table to_be_accepted(admin_user varchar(50) default '',post_id int,CONSTRAINT fk_po_pr_bridge FOREIGN KEY(post_id) REFERENCES post(post_id),primary key(admin_user,post_id));
