@@ -10,3 +10,7 @@ alter table post modify  username varchar(50) not null;
 
 
  alter table post modify title varchar(100) not null;
+
+
+
+alter table post add brief_desc varchar(150);
