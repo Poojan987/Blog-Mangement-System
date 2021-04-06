@@ -22,3 +22,5 @@ create table to_be_accepted(admin_user varchar(50) default '',post_id int,CONSTR
 
 For temporary 
 create table permission_bridge_temp(admin_user varchar(50),post_id int,dt timestamp default current_timestamp, status varchar(20)  ,CONSTRAINT fk_ad_pr_bridge_tp FOREIGN KEY(admin_user) REFERENCES admin(username),CONSTRAINT fk_po_pr_bridge_tp FOREIGN KEY(post_id) REFERENCES post(post_id),primary key(admin_user,post_id));
+
+alter table to_be_accepted add appr boolean default 0;
