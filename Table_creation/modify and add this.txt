@@ -27,4 +27,5 @@ alter table to_be_accepted add appr boolean default 0;
 
 
 
-create table likes(
+create table likes(username varchar(50), post_id int, CONSTRAINT fk_us_po_bridge FOREIGN KEY(username) REFERENCES user(username), CONSTRAINT fk_po_lk_bridge FOREIGN KEY(post_id) REFERENCES post(post_id),primary key(username,post_id));
+
