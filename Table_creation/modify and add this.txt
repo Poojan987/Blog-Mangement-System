@@ -33,4 +33,4 @@ create table likes(username varchar(50), post_id int, CONSTRAINT fk_us_po_bridge
 
 
 views table 
-create table views(post_id int, views int, CONSTRAINT fk_po_views FOREIGN KEY(post_id) REFERENCES post(post_id),primary key(post_id,views));
+create table views(post_id int, views int default 0, CONSTRAINT fk_po_views FOREIGN KEY(post_id) REFERENCES post(post_id),primary key(post_id,views));
