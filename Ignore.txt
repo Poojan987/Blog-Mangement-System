@@ -1,0 +1,46 @@
+DELIMITER //
+
+CREATE TRIGGER validate_sales_amount BEFORE INSERT ON sales
+FOR EACH ROW
+IF NEW.sales_amount>10000 THEN
+SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = 'Sale has exceeded the allowed amount of 10000.';
+END IF//
+DELIMITER ;
+
+delimiter //
+create trigger validate_username_length before insert on login
+for each row
+if length(new.username)<5 then
+	signal sqlstate '45001'
+	set message_text='Username should have more than 5 characters';
+	end if//
+	
+delimiter ;
+
+DROP PROCEDURE IF EXISTS validate_username_length;
+
+https://overiq.com/mysql-connector-python-101/exception-handling-in-connector-python/
+
+
+
+try:
+	try:
+		cur.execute("INSERT INTO login(username, user_password, isAdmin, isSuperAdmin) VALUES(%s, %s, %s, %s)", (username, password, False, False))
+		# NB : you won't get an IntegrityError when reading
+	except (mysql.connection.Error, mysql.connection.Warning) as e:
+		print("----------------->")
+		print(e)
+		flash('hello','danger')
+		return render_template('Register_2.html',form=form)
+
+	row = cur.fetchone()
+	if row:
+		return row[0]
+	return None
+
+finally:
+	cur.close()
+	
+	
+trigger for checking username exists or not

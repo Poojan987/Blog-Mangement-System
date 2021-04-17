@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <style>
+        .lnk{
+            border: none;
+        }
+        td a {
+            text-decoration: none;
+        }
+    </style>
+
+    <a href="/add_user" class="btn btn-success"> Add user </a>
+    <h1>Users</h1>
+    <br>
+    <table class="table">
+        <tr>
+            <th>Index</th>
+            <th>Username</th>
+            <th>Name</th>
+            <th></th>
+        </tr>
+
+        {% for user in users %}
+        <div>     
+                <tr class="hvr" onclick="window.location='profile_user/{{user.username}}';">
+                    <td> {{loop.index}} </td>
+                    <td> {{user.username}} </td>
+                    <td> {{user.firstName}} {{user.lastName}} </td>
+                    <td>
+                        <form action="{{url_for('delete_user', username = user.username) }}" method="POST">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="submit" value="Delete" class="btn btn-danger">
+                        </form>
+                    </td>
+                </tr>
+            
+        </div>
+        {% endfor %}
+    </table>
+    </hr>
+
+
+
+
+
+{% endblock %}

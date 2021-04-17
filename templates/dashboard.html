@@ -1,30 +1,38 @@
-{% extends "layout.html" %}
+{% extends 'layout.html' %}
 
 {% block body %}
-<h1>Dashboard</h1>
-<h2>Hello {{session.username}}</h2>
- <a class="btn btn-success" href="/add_Post"> Add Post</a>
-  <hr>
-  <table class="table table-striped">
-    <tr>
-      
-      <th>Title</th>
-      <th>Date</th>
-      <th></th>
-      <th></th>
-    </tr>
-    {% for post in articles %}
-      <tr>
-        <td>{{post.title}}</td>
-        <td>{{post.dt}}</td>
-        <td><a href="edit_post/{{post.id}}" class="btn btn-default pull-right">Edit</a></td>
-        {# <td>
-          <form action="{{url_for('delete_article', id=article.id)}}" method="post">
-            <input type="hidden" name="_method" value="DELETE">
-            <input type="submit" value="Delete" class="btn btn-danger">
-          </form>
-        </td> #}
-      </tr>
-    {% endfor %}
-  </table>
-{% endblock  %}
+  
+    <h1> Dashboard <small>Welcome {{ session.username }}</small> </h1>
+    <a href="/add_Post" class="btn btn-success"> Add Post </a>
+
+    <hr>
+    <table class="table">
+        <tr>
+            <th>Index</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Date</th>
+            <th></th>
+            <th></th>
+
+        </tr>
+
+        {% for post in posts %}
+            <tr class="hvr" onclick="window.location='all_posts/{{ post.post_id }}';">
+                <td> {{loop.index}} </td>
+                <td> {{post.title}} </td>
+                <td> {{post.username}} </td>
+                <td>{{post.dt}}</td>
+                <td> <a href="edit_post/{{ post.post_id }}" class="btn btn-default pull-right">Edit</a> </td>
+                
+                <td>
+                    <form action="/delete_post/{{post.post_id}}" method="POST">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="submit" value="Delete" class="btn btn-danger">
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}

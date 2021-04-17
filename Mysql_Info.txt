@@ -1,0 +1,46 @@
+delimeter //		----> the symbol after delimeter will be now our ending symbol forever
+Create table Student_age(age INT, Name Varchar(35));
+Create Trigger before_inser_studentage BEFORE INSERT ON student_age FOR EACH ROW
+BEGIN
+IF NEW.age < 0 THEN SET NEW.age = 0;
+END IF;
+END //
+
+
+to change to normal we type
+delimeter;
+
+
+drop function if exists no_of_years;
+delimiter //
+create function no_of_years(date1 date) returns int deterministic
+begin
+ declare date2 int;
+  select current_date()into date2;
+  return year(date2)-year(date1);
+end 
+//
+delimiter ;
+
+
+
+DELIMITER //
+
+CREATE FUNCTION no_of_years(date1 date) RETURNS int DETERMINISTIC
+BEGIN
+ DECLARE date2 int;
+  Select current_date()into date2;
+  RETURN year(date2)-year(date1);
+END 
+
+//
+
+DELIMITER ;
+
+
+
+
+
+Select emp_id, fname, lname, no_of_years(start_date) as 'years' from employee;
+
+Select username,  no_of_years(dt) as 'years' from post;

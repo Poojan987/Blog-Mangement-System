@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <h1>Profile</h1>
+  {% from "includes/_formhelpers.html" import render_field %}
+<link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}"/>  
+
+
+  <form method="POST" action="">
+    <div class="row">
+      <h4>Account</h4>
+      {# first name #}
+      <div class="input-group ">
+        {# <input type="text" placeholder="First Name"/> #}
+        {{render_field(form.fname, class_="form-control")}}
+        <!-- <div class="input-icon"><i class="fa fa-user"></i></div> -->
+      </div>
+      {# last name #}
+      <div class="input-group ">
+        {# <input type="text" placeholder="Last Name"/> #}
+        {{render_field(form.lname, class_="form-control")}}
+        <!-- <div class="input-icon"><i class="fa fa-user"></i></div> -->
+      </div>
+
+      {# email #}
+      <div class="input-group ">
+        {# <input type="email" placeholder="Email Adress"/> #}
+        {{render_field(form.email, class_="form-control")}}
+        <!-- <div class="input-icon"><i class="fa fa-envelope"></i></div> -->
+      </div>
+      
+      
+    </div>
+    <div class="row">
+        <h4>Date of Birth</h4>
+        {{render_field(form.dob,class="form-control")}}
+      
+        <h4>Gender</h4>
+        {% for subfield in form.gender %}
+    <tr>
+        <td>{{ subfield }}</td>
+        <td>{{ subfield.label }}</td>
+    </tr>
+    {% endfor %}
+      {# </div> #}
+    </div>
+    
+     <p><input type="submit" class="btn btn-primary" value="Submit"></p>
+  </form>
+{% endblock %}

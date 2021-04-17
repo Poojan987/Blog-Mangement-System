@@ -1,1 +1,1 @@
-# Blog-Mangement-System
+# Blog-Management-System

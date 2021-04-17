@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <style>
+        .lnk{
+            border: none;
+        }
+        td a {
+            text-decoration: none;
+        }
+    </style>
+    <h1>Posts</h1>
+    <br>
+    <table class="table">
+        <tr>
+            <th>Index</th>
+            <th>Author</th>
+            <th>Title</th>
+            <th>Brief description</th>
+            <th>Date</th>
+
+        </tr>
+
+        {% for post in posts %}
+        <div>     
+                <tr class="hvr" onclick="window.location='all_posts/{{ post.post_id }}';">
+                    <td> {{loop.index}} </td>
+                    <td> <a class="lnk" href="profile_user/{{post.username}}">{{post.username}}</a> </td>
+                    <td> {{post.title}} </td>
+                    <td> {{post.brief_desc}} </td>
+                    <td> {{post.dt}} </td>
+                </tr>
+            
+        </div>
+        {% endfor %}
+    </table>
+    </hr>
+
+
+
+
+
+{% endblock %}

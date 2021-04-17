@@ -1,0 +1,276 @@
+insert into login values('super_user', 'super123', false, true);
+
+
+insert into login(username, user_password, isAdmin) values('admin1', '123', true);
+insert into login(username, user_password, isAdmin) values('admin2', '123', true);
+insert into login(username, user_password, isAdmin) values('admin3', '123', true);
+
+
+
+
+
+DELIMITER //
+create function f1(user varchar(50)) returns varchar(50)
+	cursor cur for select * from login;
+	rec cur%rowtype;
+begin
+	declare cur cursor for select * from login;
+	for rec in cur loop
+		if rec.username=user then
+			if rec.isAdmin=true then
+				return 'User is an Admin';
+			else
+				return 'User is not an Admin';
+			end if;
+		end if;
+	end loop;
+end;
+//
+
+DELIMITER ;
+
+
+create or replace function totalBranchesA2Q6 (ct branch.branch_city%type) return int as
+	cursor cur_totalBranch is select count(branch_name) cnt from branch where branch_city=ct group by branch_city;
+	rec_totalBranch cur_totalBranch%rowtype;
+begin
+	open cur_totalBranch;
+	fetch cur_totalBranch into rec_totalBranch;
+	return rec_totalBranch.cnt;
+	close cur_totalBranch;
+end;
+/
+
+
+DELIMITER //
+
+CREATE FUNCTION CalcIncome ( starting_value INT )
+RETURNS INT
+
+BEGIN
+
+   DECLARE income INT;
+
+   SET income = 0;
+
+   label1: WHILE income <= 3000 DO
+     SET income = income + starting_value;
+   END WHILE label1;
+
+   RETURN income;
+
+END; //
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+create table post(post_id int primary key AUTO_INCREMENT, username varchar(50), dt timestamp default current_timestamp ,title varchar(100) NOT NULL,isDeleted boolean default false, brief_desc varchar(150) NOT NULL, blogcontent TEXT NOT NULL,bool_repost boolean default false,repost_user_name varchar(50),CONSTRAINT fk_usname_post FOREIGN KEY(username) REFERENCES user(username));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FrameNet Brasil
+Django
+cdli
+GNU Mailman Project
+inkscape
+Kiwix
+kodi
+
+
+
+
+
+
+
+
+
+
+
+
+
+DELIMITER //
+
+CREATE FUNCTION no_of_years(date1 date) RETURNS int DETERMINISTIC
+BEGIN
+ DECLARE date2 int;
+  Select current_date()into date2;
+  RETURN year(date2)-year(date1);
+END 
+
+//
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q1 
+https://math.stackexchange.com/questions/1708770/suppose-x-y-are-random-variables-with-the-equal-variance-show-that-x-y-and
+http://www.cse.cuhk.edu.hk/~syzhang/course/Prob17/sol4.pdf (pb2)
+Q2
+https://www.probabilitycourse.com/chapter5/5_3_1_covariance_correlation.php (ex5.33)
+Q3
+https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.chegg.com%2Fhomework-help%2Fquestions-and-answers%2F5-2-0-c-6c-t-1-joint-pmf-random-variables-x-y-given-following-table-y-3-cl2c-4c-y-1-t-2-3--q50935831&psig=AOvVaw2uOn5d0zedd8N4Zu9sFyJm&ust=1617543885737000&source=images&cd=vfe&ved=0CA0QjhxqFwoTCJD209Wa4u8CFQAAAAAdAAAAABAd (similar)
+Q4
+https://www.chegg.com/homework-help/questions-and-answers/random-process-x-t-following-member-functions-x1-t-3-cos-t-x2-t-5-sin-t-x3-t-2-cos-t-sin-t-q53560046
+Q5
+https://www.chegg.com/homework-help/questions-and-answers/9-let-s-t-periodic-square-wave-illustrated-accompanying-figure-suppose-random-process-crea-q28033384
+https://math.stackexchange.com/questions/1819203/finding-pdf-of-a-converted-random-process (similar)
+
+
+
+
+
+
+
+
+
+
+
+create table views(post_id int, views int, CONSTRAINT fk_po_views FOREIGN KEY(post_id) REFERENCES post(post_id),primary key(post_id,views));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+suthi pella
+base paper ma probability of conception was constant 
+
+nava paper ma aapde conception ni probability find karri
+anne emma coital freuency as parameter use karyu
+anne lamda fertile period 6e
+anne coital frequency within lamda is 'i'
+anne r is days of intercourse occured in fertile period.
+
+
+we used this to find probability of conception
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="m-b-25"> <img src="{{ url_for('static', filename='poojan.jpg') }} " class="img-radius" alt="User-Profile-Image" width="100px" height="100px"> </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

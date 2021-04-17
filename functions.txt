@@ -1,0 +1,125 @@
+-------------> For like function
+DELIMITER //
+
+drop FUNCTION if exists liked;
+CREATE FUNCTION liked(usnm varchar(50), pid int) RETURNS int DETERMINISTIC
+BEGIN
+  DECLARE finished INTEGER DEFAULT 0;
+  DECLARE usname varchar(50);
+  DECLARE flag INTEGER default 0;
+  DECLARE postid int;
+  DEClARE cur_likes
+     CURSOR FOR
+     SELECT username,post_id FROM likes;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+  open cur_likes;
+	get_likes:LOOP
+		FETCH cur_likes INTO usname, postid;
+		IF finished=1 THEN
+set finished=0;
+			LEAVE get_likes;
+		END IF;
+	
+		IF usname=usnm and postid=pid THEN
+			SET flag=1;
+		END IF;		
+	END LOOP get_likes;
+  CLOSE cur_likes;
+
+  RETURN flag;
+END 
+
+//
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+---------------> For fetching accepted posts
+DELIMITER //
+
+drop FUNCTION if exists accepted_posts;
+CREATE FUNCTION accepted_posts() RETURNS text DETERMINISTIC
+BLOCK1: BEGIN
+  DECLARE finished INTEGER DEFAULT 0;
+  DECLARE eve_posts text default '';
+  DECLARE post_postid INT;
+  DEClARE cur_posts
+     CURSOR FOR
+     SELECT post_id FROM post;  
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+  open cur_posts;
+	get_post:LOOP
+		FETCH cur_posts INTO post_postid;
+		IF finished=1 THEN
+			LEAVE get_post;
+		END IF;
+		
+		BLOCK2: BEGIN
+		DECLARE finished1 INTEGER DEFAULT 0;
+		DECLARE acc_postid INT;
+		DEClARE cur_permission
+	          CURSOR FOR
+     		  SELECT post_id FROM to_be_accepted;
+		DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished1 = 1;
+		open cur_permission;
+			get_permission:LOOP
+				FETCH cur_permission INTO acc_postid;
+				IF finished1=1 THEN
+					LEAVE get_permission;
+				END IF;
+				
+				IF acc_postid=post_postid THEN
+					SET eve_posts = CONCAT(eve_posts,";",acc_postid);
+				END IF;
+			END LOOP get_permission;
+		CLOSE cur_permission;
+		end BLOCK2;
+	END LOOP get_post;
+  CLOSE cur_posts;
+
+  RETURN eve_posts;
+END BLOCK1
+
+//
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------->>>>>>>PROCEDURE TO COUNT VIEWS------------->>>>>>>
+DELIMITER //
+drop procedure if exists check_views;
+
+create procedure check_views(IN Post_id int)
+	BEGIN
+		declare tkp int default 0;
+		set tkp = EXISTS(SELECT * FROM views where views.post_id=Post_id);
+		IF tkp=1 THEN
+			SELECT view INTO @view from views where views.post_id=Post_id;
+			update views set view=@view+1 where views.post_id=Post_id;
+		END IF;
+		IF tkp=0 THEN
+			INSERT INTO views values(Post_id, 1);
+		END IF;
+		
+	END 
+//
+
+DELIMITER;

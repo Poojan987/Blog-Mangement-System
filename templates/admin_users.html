@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  
+    <a href="/add_admin_user" class="btn btn-success"> Add admin user </a>
+
+    <h1>Admins</h1>
+    <br>
+    <table class="table table-striped">
+        <tr>
+            <th>Index</th>
+            <th>Username</th>
+            <th></th>
+        </tr>
+
+        {% for admin_user in admin_users %}
+            <tr>
+                <td> {{loop.index}} </td>
+                <td> {{admin_user.username}} </td>
+                <td>
+                    <form action="{{url_for('delete_admin_user', username = admin_user.username) }}" method="POST">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="submit" value="Delete" class="btn btn-danger">
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}

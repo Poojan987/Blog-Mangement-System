@@ -1,0 +1,614 @@
+https://stackoverflow.com/questions/11754781/how-to-declare-a-variable-in-mysql
+
+delimiter //
+create trigger validate_username_length before insert on login
+for each row
+if length(new.username)<5 then
+	signal sqlstate '45001'
+	set message_text='Username should have more than 5 characters';
+	end if//
+	
+delimiter ;
+
+delimiter //
+
+CREATE TRIGGER pgl_new_user 
+AFTER INSERT ON users FOR EACH ROW
+BEGIN
+    DECLARE m_user_team_id integer;
+    DECLARE m_projects_id integer;
+    DECLARE cur CURSOR FOR SELECT project_id FROM user_team_project_relationships WHERE user_team_id = m_user_team_id;
+
+    SET @m_user_team_id := (SELECT id FROM user_teams WHERE name = "pgl_reporters");
+
+    OPEN cur;
+        ins_loop: LOOP
+            FETCH cur INTO m_projects_id;
+            IF done THEN
+                LEAVE ins_loop;
+            END IF;
+            INSERT INTO users_projects (user_id, project_id, created_at, updated_at, project_access) 
+            VALUES (NEW.id, m_projects_id, now(), now(), 20);
+        END LOOP;
+    CLOSE cur;
+END //
+
+
+delimiter //
+create trigger validate_username_length before insert on login
+for each row
+if length(new.username)<5 then
+	signal sqlstate '45001'
+	set message_text='Username should have more than 5 characters';
+	end if//
+	
+delimiter ;
+
+
+
+------------------>1-------->Checking if user already exist
+trigger -->
+if username already exists in user table than generate validate
+
+
+delimiter //
+drop trigger if exists user_already_exist;
+create  trigger user_already_exist before insert on login for each row
+begin
+	DECLARE done INT DEFAULT FALSE; 
+	declare flag int default 0;
+	declare rec_username varchar(50);
+	declare cur_usernames CURSOR FOR select username from login;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+	
+	open cur_usernames;
+		checkLoop: LOOP
+			fetch cur_usernames into rec_username;
+			if done then
+				leave checkLoop;
+			end if;
+			if(new.username=rec_username) then
+				
+				set flag=1;
+				leave checkLoop;
+			end if;
+				
+			
+		
+		end loop;
+	close cur_usernames;
+	if(flag=1) then
+		signal sqlstate '45002'
+		set message_text='Username already exists please enter unique username';
+	end if;
+end //
+
+
+delimiter ;
+
+	
+	
+	
+		
+	
+
+
+
+
+
+
+
+------------------>2-------->Email validation
+
+delimiter //
+drop trigger if exists trig_email;
+create definer=`root`@`localhost` trigger `trig_email` before insert on `user` 
+for each row 
+begin
+	if (new.`userEmail` regexp '^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$')=0  then
+			signal sqlstate value '45003'
+			set message_text = 'Email incorrect format!, Please enter again';
+		end if;
+end //
+
+delimiter ;
+
+
+
+same data updation in edit_post--->update
+can't delete comment after 1 hr---->delete
+we can only update 3 times our username-->update
+
+
+
+------------------>3-------->checking if updating post have same data or not
+delimiter //
+drop trigger if exists same_post_data;
+create  trigger same_post_data before update on post for each row
+begin
+	DECLARE done INT DEFAULT FALSE; 
+	declare flag_same_title int default 0;
+	declare flag_same_content int default 0;
+	declare rec_post_title varchar(100);
+	declare rec_post_content text;
+	declare cur_post CURSOR FOR select title,blogcontent from post where post_id=new.post_id;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+	
+	open cur_post;
+		
+	fetch cur_post into rec_post_title,rec_post_content;
+	
+	if(new.title=rec_post_title) then
+		set flag_same_title=1;
+	end if;
+	
+	if(new.blogcontent=rec_post_content) then
+		set flag_same_content=1;
+	end if;
+		
+	close cur_post;
+	if(flag_same_title=1 && flag_same_content=1) then
+		signal sqlstate '45004'
+		set message_text='There is no change noticed in title or content';
+	end if;
+end //
+
+
+delimiter;
+
+------------------->Nipun-----> Inserting post_id to permission bridge after insertion of a post
+delimiter //
+drop trigger if exists not_approved;
+create trigger not_approved after insert on post for each row
+begin
+	insert into to_be_accepted(post_id) values(new.post_id);
+end //
+delimiter ;
+
+
+------------------>4-->delete user by username
+--login,admin,user,post,comment,admin_category_bridge,permission_bridge,statistics,		userName_edit_count
+1.permission_bridge
+2.admin_category_bridge,
+3.statistics
+4.comment
+5.post
+6.admin
+7.user
+on--->login
+
+
+
+delimiter //
+drop trigger if exists delete_user;
+create  trigger delete_user before delete on login for each row
+begin
+	delete from permission_bridge where admin_user=old.username;
+	delete from admin_category_bridge where admin_user=old.username;
+	delete from statistics where username=old.username;
+	delete from comment where username=old.username;
+	delete from post where username=old.username;
+	delete from admin where username=old.username;
+	delete from user where username=old.username;
+	
+end //
+
+
+delimiter ;
+
+
+
+------------------>5-------->trigger for updating username---->anyone can update only 3 times...!---->Write this in try catch
+login,admin,user,post,comment,admin_category_bridge,permission_bridge,statistics,		userName_edit_count
+on--->login
+1.admin
+2.
+
+
+
+delimiter //
+drop trigger if exists trig_username_update;
+create  trigger trig_username_update before update on login for each row
+proc_label:BEGIN
+	DECLARE done INT DEFAULT FALSE; 
+	
+	declare rec_username varchar(50);
+	declare rec_password varchar(500);
+	declare rec_isAdmin boolean;
+	declare rec_isSuperAdmin boolean;
+	declare rec_editedCount int;
+	
+	declare cur_user CURSOR FOR select username,user_password,isAdmin,isSuperAdmin from login where username=old.username;
+	declare cur_editedCount CURSOR FOR select nameEditCount from username_edit_count where username=old.username;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+	--DECLARE EXIT HANDLER FOR SQLEXCEPTION SELECT 'SQLException encountered' Message; 
+	
+	open cur_editedCount;
+	fetch cur_editedCount into rec_editedCount;
+	
+	if(old.username!=new.username) then
+		if(rec_editedCount==3) then
+			signal sqlstate '45005'
+			set message_text='You can't change username more than 3 times!!!';
+			leave proc_label;
+		end if;
+		
+		open cur_user;
+		fetch cur_user into rec_username,rec_password,rec_isAdmin,rec_isSuperAdmin;
+		insert into login values(new.username,rec_password,rec_isAdmin,rec_isSuperAdmin);
+		
+		update permission_bridge set admin_user=new.username where admin_user=old.username;
+		update admin set username=new.username where username=old.username;
+		update admin set username=new.username where username=old.username;
+		
+		update admin set username=new.username where username=old.username;
+		update admin set username=new.username where username=old.username;
+		update admin set username=new.username where username=old.username;
+		
+		update admin set username=new.username where username=old.username;
+		update admin set username=new.username where username=old.username;
+		update admin set username=new.username where username=old.username;
+		
+			
+		close cur_post;
+		if(flag_same_title=1 && flag_same_content=1) then
+			signal sqlstate '45004'
+			set message_text='There is no change noticed in title or content';
+		end if;
+	end if;
+end //
+
+
+delimiter ;
+
+
+
+
+
+
+
+
+------------------>Nipun----------Function for fetching accepted articles
+DELIMITER //
+
+drop FUNCTION if exists accepted_posts;
+CREATE FUNCTION accepted_posts() RETURNS text DETERMINISTIC
+BLOCK1: BEGIN
+  DECLARE finished INTEGER DEFAULT 0;
+  DECLARE eve_posts text default '';
+  DECLARE post_postid INT;
+  DEClARE cur_posts
+     CURSOR FOR
+     SELECT post_id FROM post;  
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+  open cur_posts;
+	get_post:LOOP
+		FETCH cur_posts INTO post_postid;
+		IF finished=1 THEN
+			LEAVE get_post;
+		END IF;
+		
+		BLOCK2: BEGIN
+		DECLARE finished1 INTEGER DEFAULT 0;
+		DECLARE acc_postid INT;
+		DEClARE cur_permission
+	          CURSOR FOR
+     		  SELECT post_id FROM to_be_accepted;
+		DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished1 = 1;
+		open cur_permission;
+			get_permission:LOOP
+				FETCH cur_permission INTO acc_postid;
+				IF finished1=1 THEN
+					LEAVE get_permission;
+				END IF;
+				
+				IF acc_postid=post_postid THEN
+					SET eve_posts = CONCAT(eve_posts,";",acc_postid);
+				END IF;
+			END LOOP get_permission;
+		CLOSE cur_permission;
+		end BLOCK2;
+	END LOOP get_post;
+  CLOSE cur_posts;
+
+  RETURN eve_posts;
+END BLOCK1
+
+//
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+DELIMITER //
+
+drop FUNCTION if exists accepted_posts;
+CREATE FUNCTION accepted_posts() RETURNS text DETERMINISTIC
+BEGIN
+  DECLARE finished INTEGER DEFAULT 0;
+  DECLARE eve_posts TEXT;
+  DECLARE post_postid TEXT;
+  DECLARE acc_postid TEXT;
+  DEClARE cur_posts
+     CURSOR FOR
+     SELECT post_id FROM post;
+  DEClARE cur_permission
+     CURSOR FOR
+     SELECT post_id FROM to_be_accepted;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+  open cur_posts;
+	get_post:LOOP
+		FETCH cur_posts INTO post_postid;
+		IF finished=1 THEN
+set finished=0;
+			LEAVE get_post;
+		END IF;
+	
+		open cur_permission;
+			get_permission:LOOP
+				FETCH cur_permission INTO acc_postid;
+				IF finished=1 THEN
+					LEAVE get_permission;
+				END IF;
+				
+				IF acc_postid=post_postid THEN
+					SET eve_posts = CONCAT(eve_posts,";",acc_postid);
+				END IF;
+			END LOOP get_permission;
+		CLOSE cur_permission;
+	END LOOP get_post;
+  CLOSE cur_posts;
+
+  RETURN eve_posts;
+END 
+
+//
+
+DELIMITER ;
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+---------------> Function for like
+DELIMITER //
+
+drop FUNCTION if exists liked;
+CREATE FUNCTION liked(usnm varchar(50), pid int) RETURNS int DETERMINISTIC
+BEGIN
+  DECLARE finished INTEGER DEFAULT 0;
+  DECLARE usname varchar(50);
+  DECLARE flag INTEGER default 0;
+  DECLARE postid int;
+  DEClARE cur_likes
+     CURSOR FOR
+     SELECT username,post_id FROM likes;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+  open cur_likes;
+	get_likes:LOOP
+		FETCH cur_likes INTO usname, postid;
+		IF finished=1 THEN
+set finished=0;
+			LEAVE get_likes;
+		END IF;
+	
+		IF usname=usnm and postid=pid THEN
+			SET flag=1;
+		END IF;		
+	END LOOP get_likes;
+  CLOSE cur_likes;
+
+  RETURN flag;
+END 
+
+//
+
+DELIMITER ;
+
+
+
+
+
+
+------------->>>>>>>> Procedure to count views
+DELIMITER //
+drop procedure if exists check_views;
+
+create procedure check_views(IN Post_id int)
+	BEGIN
+		declare tkp int default 0;
+		set tkp = EXISTS(SELECT * FROM views where views.post_id=Post_id);
+		IF tkp=1 THEN
+			SELECT view INTO @view from views where views.post_id=Post_id;
+			update views set view=@view+1 where views.post_id=Post_id;
+		END IF;
+		IF tkp=0 THEN
+			INSERT INTO views values(Post_id, 1);
+		END IF;
+		
+	END 
+//
+
+DELIMITER;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------>>>>>>>>>>>>> Procedure for stats
+DROP procedure IF EXISTS valid_post;
+DELIMITER //
+create procedure valid_post(u_name varchar(50))  
+
+BLOCK1: BEGIN
+
+	declare count_likes int default 0;
+	declare count_views int default 0;
+	declare count_posts int default 0;
+	
+	
+	declare rec_user varchar(50);
+	
+	DECLARE final_id text default '';  
+	DECLARE rec_postid int;
+	
+	DECLARE finished1 INTEGER DEFAULT 0;
+	declare finalStats text default '';
+	declare cur_posts cursor for select post_id from post where username=u_name;
+	declare cur_postid cursor for select distinct pbt.post_id from permission_bridge_temp pbt,post p where p.username=u_name and pbt.status='Approved' and pbt.post_id=p.post_id;
+	
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished1 = 1;
+	
+	open cur_postid;
+		post_list:LOOP
+			fetch cur_postid into rec_postid;
+			IF finished1 = 1 THEN
+				
+				LEAVE post_list;
+			END IF;
+			
+			SET count_posts=count_posts+1;
+		
+			block2: begin
+				declare totalLikes int DEFAULT 0;
+				declare totalViews int DEFAULT 0;
+				DECLARE finished2 INTEGER DEFAULT 0;
+				DECLARE finished3 INTEGER DEFAULT 0;
+				declare cur_totalLikes cursor for select count(*) from likes group by post_id having post_id=rec_postid;
+				declare cur_totalViews cursor for select view from views where post_id=rec_postid ;
+				SET finalStats = CONCAT(finalStats,":",rec_postid);
+				set totalLikes= likesOfParticularPost(rec_postid);
+				set totalViews= ViewsOfParticularPost(rec_postid);
+					
+					
+				SET finalStats = CONCAT(finalStats,";",totalLikes);
+				SET finalStats = CONCAT(finalStats,";",totalViews);
+				SET count_likes=count_likes+totalLikes;
+				SET count_views=count_views+totalViews;
+			end block2;
+			
+		END LOOP post_list;
+	close cur_postid;
+	
+	SET finalStats = CONCAT(finalStats,":",count_likes,";",count_views,";",count_posts);
+	select finalStats;
+	END BLOCK1;
+
+//
+Delimiter ;
+
+
+
+
+
+
+
+-------------> views of a perticular post
+DELIMITER //
+drop function if exists ViewsOfParticularPost;
+CREATE FUNCTION ViewsOfParticularPost(p_id int) RETURNS int no sql
+BEGIN
+ DECLARE views int default 0;
+ DECLARE done INT DEFAULT 0;
+ declare cur_totalViews cursor for select view from views where post_id=p_id ;
+ DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+  open cur_totalViews;
+  
+
+    my_cur_loop:LOOP 
+	fetch cur_totalViews into views;
+        IF done = 1 THEN
+            LEAVE my_cur_loop;
+        END IF;
+        
+    END LOOP my_cur_loop;
+  close cur_totalViews;
+  RETURN views;
+END 
+
+//
+
+DELIMITER ;
+
+
+
+
+------------> Likes of a perticular post
+
+
+DELIMITER //
+
+CREATE FUNCTION likesOfParticularPost(p_id int) RETURNS int no sql
+BEGIN
+ DECLARE likes int default 0;
+ DECLARE done INT DEFAULT 0;
+  declare cur_Likes cursor for select count(*) from likes group by post_id having post_id=p_id;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+  
+  
+  open cur_Likes;
+  
+
+    my_cur_loop:LOOP 
+	fetch cur_Likes into likes;
+        IF done = 1 THEN
+            LEAVE my_cur_loop;
+        END IF;
+        
+    END LOOP my_cur_loop;
+  RETURN likes;
+END 
+
+//
+
+DELIMITER ;

@@ -1,0 +1,121 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+<link rel="stylesheet" href="/static/style.css">
+    <div class="page-content page-container" id="page-content">
+        <div class="padding">
+            <div class="row container d-flex justify-content-center">
+                <div class="col-xl-6 col-md-12">
+                    <div class="card user-card-full">
+                        <div class="row m-l-0 m-r-0">
+                            <div class="col-sm-4 bg-c-lite-green user-profile">
+                                <div class="card-block text-center text-white">
+                                    <div class="m-b-25"> <img style="border-radius: 100%;" src="/static/{{pic}}" class="img-radius" alt="User-Profile-Image" width="100px" height="100px"> </div>
+                                    <h6 class="f-w-600"> {{profile['user'].firstName}} {{profile['user'].lastName}} </h6>
+                                </div>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="card-block">
+                                    <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Information</h6>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <p class="m-b-10 f-w-600">Username</p>
+                                            <h6 class="text-muted f-w-400"> {{profile['user'].username}} </h6>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <p class="m-b-10 f-w-600">Birth Date</p>
+                                            <h6 class="text-muted f-w-400"> {{profile['user'].birth_date}} </h6>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <p class="m-b-10 f-w-600">Email</p>
+                                            <h6 class="text-muted f-w-400"> {{profile['user'].userEmail}} </h6>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <p class="m-b-10 f-w-600"> Gender </p>
+                                            <h6 class="text-muted f-w-400"> {{profile['user'].gender}} </h6>
+                                        </div>
+                                    </div>
+                                    <ul class="social-link list-unstyled m-t-40 m-b-10">
+                                        <li><a href="#!" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="facebook" data-abc="true"><i class="mdi mdi-facebook feather icon-facebook facebook" aria-hidden="true"></i></a></li>
+                                        <li><a href="#!" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="twitter" data-abc="true"><i class="mdi mdi-twitter feather icon-twitter twitter" aria-hidden="true"></i></a></li>
+                                        <li><a href="#!" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="instagram" data-abc="true"><i class="mdi mdi-instagram feather icon-instagram instagram" aria-hidden="true"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<br>
+<br>
+
+
+<div class="box-footer">
+    <div class="row">
+        <div class="col-sm-4 border-right">
+            <div class="description-block">
+                <h2 class="description-header">{{profile['user'].posts}}</h2> <span class="description-text">POSTS</span>
+            </div>
+        </div>
+        <div class="col-sm-4 border-right">
+            <div class="description-block">
+                <h2 class="description-header">{{profile['user'].likes}}</h2> <span class="description-text">LIKES</span>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="description-block">
+                <h2 class="description-header">{{profile['user'].views}}</h2> <span class="description-text">VIEWS</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .lnk{
+        border: none;
+    }
+    td a {
+        text-decoration: none;
+    }
+</style>
+<h1>Posts</h1>
+<br>
+<table class="table">
+    <tr>
+        <th>Index</th>
+        <th>Title</th>
+        <th>Brief description</th>
+        <th>Date</th>
+        <th>Likes</th>
+        <th>Views</th>
+
+    </tr>
+
+    {% for post in profile.ans %}
+    <div>     
+            <tr class="hvr" onclick="window.location='/all_posts/{{ post.post_id }}';">
+                <td> {{loop.index}} </td>
+                <td> {{post.title}} </td>
+                <td> {{post.brief_desc}} </td>
+                <td> {{post.dt}} </td>
+                <td> {{post.likes}} </td>
+                <td> {{post.views}} </td>
+            </tr>
+        
+    </div>
+    {% endfor %}
+</table>
+</hr>
+
+
+
+
+
+{% endblock %}

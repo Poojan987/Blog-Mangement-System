@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    
+
+<h1>{{post.title}}</h1>
+<small>Written by {{post.username}} on {{post.dt}} </small>
+
+<hr>
+<div>
+    <h1>{{post.blogcontent | safe}}</h1>
+</div>
+    
+<hr>
+
+{% if session.logged_in and session.admin==0 and session.superuser==0 and post.flag==1%}
+<a href="/like_post/{{ post.post_id }}/{{ session.username }}" class="btn btn-success pull-leftt">Unlike</a>
+{% elif session.logged_in and session.admin==0 and session.superuser==0 and post.flag==0%}
+<a href="/like_post/{{ post.post_id }}/{{ session.username }}" class="btn btn-default pull-leftt">Like</a>
+{% endif %}
+<br>
+<br>
+<br>
+<br>
+<br>
+watermark
+
+{% endblock %}
